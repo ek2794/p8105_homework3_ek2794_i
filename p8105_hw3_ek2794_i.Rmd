@@ -1,0 +1,70 @@
+---
+title: "p8105_hw3_ek2794"
+output: github_document
+date: "2022-10-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+library(p8105.datasets)
+library(tidyverse)
+library(readxl)
+library(haven)
+library(dplyr)
+data("instacart")
+library(rnoaa)
+library("DescTools")
+library(patchwork)
+library(ggplot2)
+
+```{r}
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+##PROBLEM 2
+
+This problem uses five weeks of accelerometer data collected on a 63 year-old male with BMI 25, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). The data can be downloaded here. In this spreadsheet, variables activity.* are the activity counts for each minute of a 24-hour day starting at midnight.
+
+Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+
+
+```{r}
+accelerometer_df1 =  read_csv("./accel_data.csv") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute",
+    values_to = "activity_level",
+    names_prefix = "activity_") %>%
+  mutate(
+    minute = as.numeric(minute),
+    activity_level = round(activity_level, digits = 0),
+    daytype = recode(day, "Monday" = "weekday", "Tuesday" = "weekday", "Wednesday" = "weekday", "Thursday" = "weekday", "Friday" = "weekday", "Saturday" = "weekend", "Sunday" = "weekend"))
+head(accelerometer_df1)
+accelerometer_df1
+summary(accelerometer_df1)
+```
+
+
+Here we have 6 variables that include week number, day number, type of day, minute of the day, activity level, and daytype of weekday or weekend. There are 50,400 observations.
+
+
+
